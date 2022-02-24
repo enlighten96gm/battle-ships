@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { apiService } from './constants/network';
-import AppRouter from './shared/app-router';
+import AppRouter from './components/app-router';
 
 const App: React.FC = () => {
   return (

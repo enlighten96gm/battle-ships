@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import * as Styled from './game-supliments.styles';
 const gameField = [
   ['', '', '', '', '', '', '', '', '', ''],
   ['', '', '', '', '', '', '', '', '', ''],
@@ -66,6 +65,7 @@ export const PlaceBoat = (
             }
           }
         }
+        return currentBoat;
       } else {
         for (let i = 0; i < gameField.length; i++) {
           for (let j = 0; j < gameField[i].length; j++) {
@@ -78,16 +78,14 @@ export const PlaceBoat = (
             }
           }
         }
+        return currentBoat;
       }
-      console.log(gameField);
       // Logic here
     } else {
       // Error here if length wrong
       throw new Error('You entered wrong boat length');
     }
   } else {
-    console.log(firstLetterPos, firstY);
-
     for (let i = 0; i < gameField.length; i++) {
       for (let j = 0; j < gameField[i].length; j++) {
         if (i + 1 === Number(firstY)) {
@@ -97,6 +95,7 @@ export const PlaceBoat = (
         }
       }
     }
+    return currentBoat;
   }
 };
 
@@ -109,26 +108,9 @@ export const FieldWithShips: React.FC = () => {
     });
   };
 
-  return <Container>{renderField()}</Container>;
+  return <Styled.Container>{renderField()}</Styled.Container>;
 };
 
 export const Square: React.FC<SquareType> = ({ field, fieldIndex }) => {
-  return <SquareContainer field={field}></SquareContainer>;
+  return <Styled.SquareContainer field={field}></Styled.SquareContainer>;
 };
-
-const Container = styled.div`
-  background: white;
-  border: 1px solid blue;
-  width: 100%;
-  height: 80%;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-`;
-
-const SquareContainer = styled.div<{ field: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid black;
-  background: ${({ field }) => (field ? 'black' : 'none')};
-`;

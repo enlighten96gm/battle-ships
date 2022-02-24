@@ -2,10 +2,9 @@ import React, { ChangeEvent } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import { apiService } from '../../constants/network';
-import { FieldWithShips, PlaceBoat } from '../../shared/game-supliments/indes';
-// import { Square } from '../../shared/game-supliments/indes';
+import { FieldWithShips, PlaceBoat } from './game-supliments/indes';
+import * as Styled from './game-page.styles';
 
 const GamePage: React.FC = () => {
   const [state, setState] = useState<string[]>(['lol', 'kek']);
@@ -13,6 +12,19 @@ const GamePage: React.FC = () => {
   const [boat, setBoat] = useState('1');
   const [firstBoatPosition, setFirstBoatPosition] = useState('');
   const [secondBoatPosition, setSecondBoatPosition] = useState('');
+  const [shipsState, setShipsState] = useState([
+    '1',
+    '1',
+    '1',
+    '1',
+    '2',
+    '2',
+    '2',
+    '3',
+    '3',
+    '4',
+  ]);
+
   const location = useLocation();
   const currentRoom =
     location.pathname.split('/')[location.pathname.split('/').length - 1];
@@ -32,6 +44,8 @@ const GamePage: React.FC = () => {
   }, []);
 
   const handleCurrentShip = (event: React.MouseEvent) => {
+    setFirstBoatPosition('');
+    setSecondBoatPosition('');
     const { innerHTML } = event.target as HTMLDivElement;
     setBoat(innerHTML);
   };
@@ -45,37 +59,40 @@ const GamePage: React.FC = () => {
   };
 
   const handlePlaceBoat = () => {
-    PlaceBoat(firstBoatPosition, secondBoatPosition, boat);
+    const currentBoat = PlaceBoat(firstBoatPosition, secondBoatPosition, boat);
+    setShipsState((array) => {
+      const finalArray = [...array];
+      const deleteI = finalArray.findIndex((boat) => boat === currentBoat);
+      return [
+        ...finalArray.slice(0, deleteI),
+        ...finalArray.slice(deleteI + 1, finalArray.length),
+      ];
+    });
   };
 
   return (
     <>
-      <CreateGameContainer>
-        <Title>Game page</Title>
-        <GameContainer>
-          <YourContainer>
-            <Title>You</Title>
-            <SuperInput
+      <Styled.CreateGameContainer>
+        <Styled.Title>Game page</Styled.Title>
+        <Styled.GameContainer>
+          <Styled.YourContainer>
+            <Styled.Title>You</Styled.Title>
+            <Styled.SuperInput
               onChange={handleInputChange}
               placeholder='lol'
               value={message}
             />
             {/* <GameField></GameField> */}
-            <Letters>
+            <Styled.Letters>
               {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'].map(
                 (item) => {
                   return <div>{item}</div>;
                 }
               )}
-            </Letters>
+            </Styled.Letters>
             <FieldWithShips />
-            <BoatField>
-              <BoatButtons>
-                {['1', '2', '3', '4'].map((item) => {
-                  return <div onClick={handleCurrentShip}>{item}</div>;
-                })}
-              </BoatButtons>
-              <BoatInputsContainer>
+            <Styled.BoatField>
+              <Styled.BoatInputsContainer>
                 <div>Chosen boat {boat}</div>
                 <input
                   type='text'
@@ -90,128 +107,32 @@ const GamePage: React.FC = () => {
                   onChange={handleSecondBoatPosition}
                   value={secondBoatPosition}
                 />
-                <PlaceBoatButton onClick={handlePlaceBoat}>
+                <Styled.PlaceBoatButton onClick={handlePlaceBoat}>
                   Place
-                </PlaceBoatButton>
-              </BoatInputsContainer>
-            </BoatField>
-            <Button onClick={handleSendMessage}>Send</Button>
+                </Styled.PlaceBoatButton>
+              </Styled.BoatInputsContainer>
+              <Styled.ShipsContainer>
+                {shipsState.length > 0 ? (
+                  shipsState.map((item) => {
+                    return <div onClick={handleCurrentShip}>{item}</div>;
+                  })
+                ) : (
+                  <Styled.ReadyButton>Ready</Styled.ReadyButton>
+                )}
+              </Styled.ShipsContainer>
+            </Styled.BoatField>
+            <Styled.Button onClick={handleSendMessage}>Send</Styled.Button>
             {state.map((item) => {
               return <div>{item}</div>;
             })}
-          </YourContainer>
-          <EnemyContainer>
-            <Title>Enemy</Title>
-          </EnemyContainer>
-        </GameContainer>
-      </CreateGameContainer>
+          </Styled.YourContainer>
+          <Styled.EnemyContainer>
+            <Styled.Title>Enemy</Styled.Title>
+          </Styled.EnemyContainer>
+        </Styled.GameContainer>
+      </Styled.CreateGameContainer>
     </>
   );
 };
 
 export default GamePage;
-
-const CreateGameContainer = styled.div`
-  width: 90%;
-  height: 90%;
-  border: 1px solid black;
-  border-radius: 10px;
-  box-shadow: 10px 5px 20px 2px;
-  background: rgba(200, 200, 200, 0.2);
-  overflow: hidden;
-`;
-
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px dotted black;
-  flex-direction: column;
-  font-weight: bold;
-  text-transform: uppercase;
-  height: 5%;
-`;
-
-const GameContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-  > :first-child {
-    border-right: 1px solid black;
-  }
-`;
-
-const YourContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-const EnemyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const GameField = styled.div`
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  width: 400px;
-  height: 400px;
-  background: pink;
-`;
-const BoatField = styled.div`
-  display: flex;
-  width: 100%;
-  height: 20%;
-  background: yellowgreen;
-  * {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-  }
-`;
-const BoatButtons = styled.div`
-  margin-left: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  * {
-    cursor: pointer;
-    border: 1px solid red;
-  }
-`;
-
-const BoatInputsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 10px;
-  gap: 5px;
-`;
-
-const SuperInput = styled.input`
-  width: 100%;
-  height: 50px;
-`;
-
-const Button = styled.div`
-  width: 50%;
-  height: 50px;
-  border: 1px solid black;
-`;
-
-const Letters = styled.div`
-  display: grid;
-  width: 100%;
-  grid-template-columns: repeat(10, 1fr);
-  * {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-`;
-
-const PlaceBoatButton = styled.div`
-  height: 30px;
-  width: 100%;
-  border: 1px solid black;
-  background: white;
-`;

@@ -2,9 +2,9 @@ import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import { apiService } from '../../constants/network';
 import { ApplicationRoutes } from '../../constants/routes.constants';
+import * as Styled from './lobby-list.styles';
 
 const LobbyList: React.FC = () => {
   const [lobbyArray, setLobbyArray] = useState<string[]>([]);
@@ -22,9 +22,12 @@ const LobbyList: React.FC = () => {
         <>
           {lobbyArray.map((item, index) => {
             return (
-              <CurrentLobby onClick={handleAcceptLobbyInvitation} key={index}>
+              <Styled.CurrentLobby
+                onClick={handleAcceptLobbyInvitation}
+                key={index}
+              >
                 {item}
-              </CurrentLobby>
+              </Styled.CurrentLobby>
             );
           })}
         </>
@@ -36,48 +39,16 @@ const LobbyList: React.FC = () => {
 
   useEffect(() => {
     apiService.getLobbyCount('count', setLobbyArray);
-    console.log(lobbyArray);
   }, [lobbyArray]);
 
   return (
     <>
-      <LobbyContainer>
-        <Title>Lobby list</Title>
+      <Styled.LobbyContainer>
+        <Styled.Title>Lobby list</Styled.Title>
         {renderList()}
-      </LobbyContainer>
+      </Styled.LobbyContainer>
     </>
   );
 };
 
 export default LobbyList;
-
-const LobbyContainer = styled.div`
-  width: 30%;
-  border: 1px solid black;
-  border-radius: 10px;
-  box-shadow: 10px 5px 20px 2px;
-  background: rgba(200, 200, 200, 0.2);
-`;
-
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px dotted black;
-  font-weight: bold;
-  text-transform: uppercase;
-  height: 50px;
-`;
-
-const CurrentLobby = styled.div`
-  width: 100%;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid black;
-  cursor: pointer;
-  &:hover {
-    background: rgba(100, 20, 100, 0.4);
-  }
-`;

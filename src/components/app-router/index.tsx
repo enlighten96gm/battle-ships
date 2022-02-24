@@ -1,14 +1,14 @@
-import { ComponentType, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from 'react-router-dom';
-import CreateLobbyPage from '../../components/create-lobby-page';
-import GamePage from '../../components/game-page';
-import LobbyList from '../../components/lobby-list';
-import MainPage from '../../components/main-page';
+import CreateLobbyPage from '../create-lobby-page';
+import GamePage from '../game-page';
+import LobbyList from '../lobby-list';
+import MainPage from '../main-page';
 import { ApplicationRoutes } from '../../constants/routes.constants';
 
 export interface RouterInterface {
